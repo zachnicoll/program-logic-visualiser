@@ -1,12 +1,12 @@
 const path = require('path');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin-advanced');
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
   entry: ['./index.ts', './styles/app.scss'],
   devtool: 'inline-source-map',
-  resolve: { extensions: ['.ts', '.js'], },
+  resolve: { extensions: ['.ts', '.js'] },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'app.bundle.js',
@@ -38,7 +38,7 @@ module.exports = {
         flatten: true,
       },
       {
-        from: 'index.html'
+        from: 'index.html',
       },
     ]),
   ],

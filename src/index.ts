@@ -17,5 +17,3 @@ const graphics = new Graphics();
 
 container.addChild(graphics);
 app.stage.addChild(container);
-
-
