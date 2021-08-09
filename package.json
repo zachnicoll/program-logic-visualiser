@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "webpack serve --mode development --open",
-    "lint": "yarn eslint --ext .ts --fix --no-error-on-unmatched-pattern ."
+    "lint": "yarn eslint --ext .ts --fix --no-error-on-unmatched-pattern .",
+    "prepare": "husky install"
   },
   "dependencies": {
     "css-loader": "^6.2.0",
@@ -26,6 +27,7 @@
     "eslint-config-airbnb": "^18.2.1",
     "eslint-import-resolver-webpack": "^0.13.1",
     "eslint-plugin-import": "^2.24.0",
+    "husky": "^7.0.1",
     "mini-css-extract-plugin": "^2.2.0",
     "node-sass": "^6.0.1",
     "sass-loader": "^12.1.0",

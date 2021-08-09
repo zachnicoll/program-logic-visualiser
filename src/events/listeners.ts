@@ -22,12 +22,12 @@ const textAreaListeners = (): void => {
   });
 };
 
-const buttonListeners = () => {
+const buttonListeners = (): void => {
   const generateButton = document.getElementById('generate-button');
   generateButton.addEventListener('click', onGenerateClick);
 };
 
-const initialiseEventListeners = () => {
+const initialiseEventListeners = (): void => {
   textAreaListeners();
   buttonListeners();
 };

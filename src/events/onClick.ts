@@ -1,6 +1,6 @@
 import { tokenize } from '../parser/tokenize';
 
-export const onGenerateClick = () => {
+export const onGenerateClick = (): void => {
   const textarea = document.getElementById('code-input') as HTMLTextAreaElement;
   const sourceCodeText = textarea.value;
 

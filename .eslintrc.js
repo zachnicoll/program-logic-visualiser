@@ -17,6 +17,7 @@ module.exports = {
   rules: {
     'no-console': 'warn',
     'import/extensions': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'error',
   },
   settings: {
     'import/resolver': {

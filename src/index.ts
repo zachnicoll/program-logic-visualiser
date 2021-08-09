@@ -1,5 +1,5 @@
 import { Application, Container, Graphics } from 'pixi.js';
-import { initialiseEventListeners } from './events/listeners';
+import initialiseEventListeners from './events/listeners';
 
 initialiseEventListeners();
 
