@@ -2,7 +2,7 @@ import { onGenerateClick } from "./onClick";
 
 const textAreaListeners = () => {
   // Make sure tab-presses are inputted as tabs
-  const textarea = document.getElementById('code-input');
+  const textarea = document.getElementById('code-input') as HTMLTextAreaElement;
 
   textarea.value = "func main() does\n\tperform HELLO_WORLD\nend"
 

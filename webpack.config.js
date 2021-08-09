@@ -4,7 +4,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin-advanced');
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
-  entry: ['./index.js', './styles/app.scss'],
+  entry: ['./index.ts', './styles/app.scss'],
+  devtool: 'inline-source-map',
+  resolve: { extensions: ['.ts', '.js'], },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'app.bundle.js',
@@ -16,17 +18,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: [{
-          loader: 'babel-loader',
-          options: { presets: ["@babel/preset-env"] },
-        }],
-      },
-      {
         test: /\.(sass|scss)$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
-      }
+      },
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
     ],
   },
   plugins: [
