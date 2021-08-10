@@ -7,7 +7,7 @@ export const onGenerateClick = (): void => {
 
   try {
     const tokens = tokenize(sourceCodeText);
-    const funcGraph = functionGraph(tokens);
+    const funcGraph = functionGraph(tokens, sourceCodeText);
     console.log(funcGraph);
   } catch (e) {
     alert(`Syntax error! ${(e as Error).message}`);
