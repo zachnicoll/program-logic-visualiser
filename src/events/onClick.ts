@@ -1,8 +1,8 @@
-import functionGraph from '../parser/functionGraph';
-import tokenize from '../parser/tokenize';
+import functionGraph from "../parser/functionGraph";
+import tokenize from "../parser/tokenize";
 
 export const onGenerateClick = (): void => {
-  const textarea = document.getElementById('code-input') as HTMLTextAreaElement;
+  const textarea = document.getElementById("code-input") as HTMLTextAreaElement;
   const sourceCodeText = textarea.value;
 
   try {

@@ -3,26 +3,24 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: [
-    'airbnb-base',
-  ],
-  parser: '@typescript-eslint/parser',
+  extends: ["airbnb-base", "prettier"],
+  parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: 12,
-    sourceType: 'module',
+    sourceType: "module",
   },
-  plugins: [
-    '@typescript-eslint',
-  ],
+  plugins: ["@typescript-eslint"],
   rules: {
-    'no-console': 'warn',
-    'import/extensions': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'error',
+    "no-console": "off",
+    "import/extensions": "off",
+    "@typescript-eslint/explicit-function-return-type": "error",
+    "no-alert": "off",
+    "no-unused-vars": "warn",
   },
   settings: {
-    'import/resolver': {
+    "import/resolver": {
       node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
       },
     },
   },

@@ -2,14 +2,15 @@ type FunctionInformation = {
   parameters: string[];
   startIndex: number; // Index in string where declaration starts, the beginning of 'func'
   endIndex: number; // Index in string where declaration ends, the end of 'does\n'
-}
+};
 
 export interface FunctionDeclarationMap {
-  [funcName: string]: FunctionInformation
+  [funcName: string]: FunctionInformation;
 }
 
 const tokenize = (sourceCodeText: string): FunctionDeclarationMap => {
-  const funcDeclarationRegex = /func ([a-zA-Z_]+)(\((?:[a-zA-Z_ ]+[,]?)*\)) does\n/g;
+  const funcDeclarationRegex =
+    /func ([a-zA-Z_]+)(\((?:[a-zA-Z_ ]+[,]?)*\)) does\n/g;
 
   const functions: FunctionDeclarationMap = {};
 
@@ -23,12 +24,14 @@ const tokenize = (sourceCodeText: string): FunctionDeclarationMap => {
         const funcParams = funcParamsStr
           // Remove the '(' & ')' chars from parameter declaration
           .substring(1, funcParamsStr.length - 1)
-          .replace(/\s/g, '') // Remove all whitespace
-          .split(',') // Split the parameters by ',' char, e.g. a,b,c
-          .filter((str) => str !== ''); // Filter for edge case where there are no params and "" is returned
+          .replace(/\s/g, "") // Remove all whitespace
+          .split(",") // Split the parameters by ',' char, e.g. a,b,c
+          .filter((str) => str !== ""); // Filter for edge case where there are no params and "" is returned
 
         if (functions[funcName] !== undefined) {
-          throw new Error('More than one function declared with the same name!');
+          throw new Error(
+            "More than one function declared with the same name!"
+          );
         }
 
         functions[funcName] = {
@@ -37,10 +40,10 @@ const tokenize = (sourceCodeText: string): FunctionDeclarationMap => {
           endIndex: newMatch.index + newMatch[0].length,
         };
       } else {
-        throw new Error('Invalid function parameter declaration!');
+        throw new Error("Invalid function parameter declaration!");
       }
     } else {
-      throw new Error('Invalid function declaration!');
+      throw new Error("Invalid function declaration!");
     }
 
     newMatch = funcDeclarationRegex.exec(sourceCodeText);

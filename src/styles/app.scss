@@ -1,15 +1,16 @@
-$mint:	#f5fffa;
-$pink: 	#eea9b8;
+$mint: #f5fffa;
+$pink: #eea9b8;
 $navajo_white: #ffdead;
 $chocolate: #7b3d11;
-$dark_chocolate: 	#52280b;
+$dark_chocolate: #52280b;
 
 * {
   box-sizing: border-box;
-  font-family: 'Overpass Mono', monospace;
+  font-family: "Overpass Mono", monospace;
 }
 
-html, body {
+html,
+body {
   display: block;
   height: 100%;
   width: 100%;
@@ -58,9 +59,9 @@ textarea:focus-visible {
 
 textarea,
 pre {
-    -moz-tab-size : 2;
-      -o-tab-size : 2;
-         tab-size : 2;
+  -moz-tab-size: 2;
+  -o-tab-size: 2;
+  tab-size: 2;
 }
 
 #generate-button {
