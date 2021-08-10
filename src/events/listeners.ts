@@ -4,7 +4,7 @@ const textAreaListeners = (): void => {
   // Make sure tab-presses are inputted as tabs
   const textarea = document.getElementById('code-input') as HTMLTextAreaElement;
 
-  textarea.value = 'func main() does\n\tperform HELLO_WORLD\nend';
+  textarea.value = 'func a() does\n\tperform A_ACTION\nend\n\nfunc main() does\n\tperform HELLO_WORLD\n\ta()\nend';
 
   textarea.addEventListener('keydown', (e) => {
     if (e.key === 'Tab') {
