@@ -9,7 +9,7 @@ export const drawText = (
   const text = new Text(textStr, {
     fontFamily: "monospace",
     fontSize: 14,
-    align: "center",
+    align: "center"
   });
   text.anchor.set(0.5, 0.5);
   text.position.set(x, y);
