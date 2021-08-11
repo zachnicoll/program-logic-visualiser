@@ -30,6 +30,7 @@
     "eslint-import-resolver-webpack": "^0.13.1",
     "eslint-plugin-import": "^2.24.0",
     "husky": "^7.0.1",
+    "lint-staged": ">=10",
     "mini-css-extract-plugin": "^2.2.0",
     "node-sass": "^6.0.1",
     "prettier": "2.3.2",
@@ -41,5 +42,9 @@
   },
   "resolutions": {
     "**/node-sass": "^6.0.1"
+  },
+  "lint-staged": {
+    "*.ts": "eslint --cache --fix",
+    "*.--write": "prettier --write"
   }
 }
