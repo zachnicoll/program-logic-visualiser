@@ -1,31 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>PixiJs Test</title>
-    <link rel="stylesheet" href="app.bundle.css" />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@300;400;600;700&display=swap");
-    </style>
-  </head>
 
-  <body>
-    <div id="container" class="grid-container">
-      <div style="height: 100%">
-        <div id="src-code-title-container">
-          <h1>Source Code</h1>
-        </div>
-        <textarea
-          id="code-input"
-          placeholder="Enter your source code here..."
-        ></textarea>
-        <button id="generate-button">Generate Visualisation</button>
+<head>
+  <meta charset="utf-8" />
+  <title>PixiJs Test</title>
+  <link rel="stylesheet" href="app.bundle.css" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@300;400;600;700&display=swap");
+  </style>
+</head>
+
+<body>
+  <div id="container" class="grid-container">
+    <div style="height: 100%">
+      <div id="src-code-title-container">
+        <h1>Source Code</h1>
       </div>
-
-      <!-- Empty div to separate canvas in grid layout -->
-      <div></div>
+      <textarea id="code-input" placeholder="Enter your source code here..."></textarea>
+      <button id="generate-button">Generate Visualisation</button>
     </div>
 
-    <script src=" app.bundle.js"></script>
-  </body>
+    <div id="pixi-display"></div>
+  </div>
+
+  <script src=" app.bundle.js"></script>
+</body>
+
 </html>
