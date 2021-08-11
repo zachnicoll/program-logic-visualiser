@@ -1,6 +1,6 @@
 import { FunctionDeclarationMap } from "./tokenize";
 
-type FunctionCallGraph =
+export type FunctionCallGraph =
   | {
       name: string;
       calls: FunctionCallGraph[];

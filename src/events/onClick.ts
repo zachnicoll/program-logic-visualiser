@@ -1,5 +1,6 @@
 import functionGraph from "../parser/functionGraph";
 import tokenize from "../parser/tokenize";
+import drawFunctionGraph from "../pixi/drawFunctionGraph";
 
 export const onGenerateClick = (): void => {
   const textarea = document.getElementById("code-input") as HTMLTextAreaElement;
@@ -8,7 +9,7 @@ export const onGenerateClick = (): void => {
   try {
     const tokens = tokenize(sourceCodeText);
     const funcGraph = functionGraph(tokens, sourceCodeText);
-    console.log(funcGraph);
+    drawFunctionGraph(funcGraph);
   } catch (e) {
     alert(`Syntax error! ${(e as Error).message}`);
   }

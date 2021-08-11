@@ -4,7 +4,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin-advanced");
 
 module.exports = {
   context: path.resolve(__dirname, "src"),
-  entry: ["./index.ts", "./styles/app.scss"],
+  entry: ["./index.ts", "./styles/index.scss"],
   devtool: "inline-source-map",
   resolve: { extensions: [".ts", ".js"] },
   output: {
