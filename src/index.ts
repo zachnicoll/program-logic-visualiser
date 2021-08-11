@@ -1,4 +1,4 @@
-import app from "./pixi";
+import app from "./draw";
 import initialiseEventListeners from "./events/listeners";
 
 initialiseEventListeners();

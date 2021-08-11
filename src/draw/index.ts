@@ -6,7 +6,7 @@ const app = new Application({
   antialias: true,
   autoDensity: true,
   height: window.innerHeight,
-  width: window.innerWidth * 0.66
+  width: window.innerWidth * 0.66,
 });
 
 export const graphics = new Graphics();

@@ -1,6 +1,6 @@
 import functionGraph from "../parser/functionGraph";
 import tokenize from "../parser/tokenize";
-import drawFunctionGraph from "../pixi/drawFunctionGraph";
+import drawFunctionGraph from "../draw/drawFunctionGraph";
 
 export const onGenerateClick = (): void => {
   const textarea = document.getElementById("code-input") as HTMLTextAreaElement;
