@@ -1,23 +1,7 @@
 import { FunctionDeclarationMap } from "./tokenize";
+import { FunctionCallGraph } from "./types";
 
-export type FunctionCallGraph =
-  | {
-      name: string;
-      calls: FunctionCallGraph[];
-    }
-  | ({
-      name: string;
-      calls: FunctionCallGraph[];
-      isCalledBy: string;
-    } & (
-      | {
-          conditionallyCalled: false;
-        }
-      | {
-          conditionallyCalled: true;
-          callCondition: string;
-        }
-    ));
+const ENTRY_POINT = "main";
 
 const functionCallRegex = /[a-zA-Z_]+\((?:[a-zA-Z_ ]+[,]?)*\)/g;
 
@@ -38,7 +22,7 @@ const analyseFunction = (
 
   const funcGraph: FunctionCallGraph = {
     name: functionName,
-    calls: [],
+    calls: []
   };
 
   for (let i = 0; i < funcLines.length; i += 1) {
@@ -62,13 +46,13 @@ const functionGraph = (
   functionDeclarations: FunctionDeclarationMap,
   sourceCode: string
 ): FunctionCallGraph => {
-  if (!functionDeclarations.main) {
+  if (!functionDeclarations[ENTRY_POINT]) {
     throw new Error(
       "No program entry point found! Make sure you declare main()."
     );
   }
 
-  return analyseFunction("main", functionDeclarations, sourceCode);
+  return analyseFunction(ENTRY_POINT, functionDeclarations, sourceCode);
 };
 
 export default functionGraph;

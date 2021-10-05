@@ -1,6 +1,6 @@
 import { Graphics } from "pixi.js";
 import app, { graphics } from ".";
-import { FunctionCallGraph } from "../parser/functionGraph";
+import { FunctionCallGraph } from "../parser/types";
 import formatFuncName from "../utils/format";
 import { drawCircle, drawText } from "./draw";
 
@@ -41,6 +41,20 @@ const drawNodeRow = (
   });
 };
 
+const nodeColumnWidth = (functionCallGraph: FunctionCallGraph): any => {
+  const fcg = functionCallGraph;
+
+  // Recursively re-assign all the nodes in the graph with an object containing that node's width
+  fcg.calls.forEach((call, i) => {
+    fcg.calls[i] = nodeColumnWidth(call);
+  });
+
+  // Node width is defined by the number of child nodes, and is used for drawing the graph with even spacing
+  fcg.width = fcg.calls.length;
+
+  return fcg;
+};
+
 const drawFunctionGraph = (functionCallGraph: FunctionCallGraph): void => {
   graphics.removeChildren();
   graphics.clear();
@@ -48,6 +62,10 @@ const drawFunctionGraph = (functionCallGraph: FunctionCallGraph): void => {
   const middleCanvas = app.view.width / 2;
   const baseY = -50; // Making it negative so I can do one function call to drawNodeRow, and it positions main() correctly
   const baseX = middleCanvas;
+
+  const graphWithWidths = nodeColumnWidth(functionCallGraph);
+
+  console.log(graphWithWidths);
 
   // Traverse graph and draw all nodes
   drawNodeRow(graphics, [functionCallGraph], baseX, baseY);

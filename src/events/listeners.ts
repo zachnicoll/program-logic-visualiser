@@ -20,6 +20,23 @@ end
 
 func d() does
   perform D_ACTION
+	b()
+	a()
+	e()
+	f()
+	g()
+end
+
+func e() does
+  perform E_ACTION
+end
+
+func f() does
+  perform F_ACTION
+end
+
+func g() does
+  perform G_ACTION
 end
 
 func main() does
@@ -28,7 +45,6 @@ func main() does
   b()
   c()
   d()
-end
   `;
 
   textarea.addEventListener("keydown", (e) => {

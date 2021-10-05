@@ -16,6 +16,10 @@ module.exports = {
     "@typescript-eslint/explicit-function-return-type": "error",
     "no-alert": "off",
     "no-unused-vars": "warn",
+    "no-restricted-syntax": "off",
+    "no-loop-func": "off",
+    "no-param-reassign": "off",
+    camelcase: "off",
   },
   settings: {
     "import/resolver": {
