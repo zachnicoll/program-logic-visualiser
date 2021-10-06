@@ -23,21 +23,41 @@ const drawNodeRow = (
   g: Graphics,
   calls: FunctionCallGraph[],
   baseX: number,
-  baseY: number
+  baseY: number,
+  firstParent: boolean
 ): void => {
   const numNodes = calls.length;
   const xIncrement = nodeRadius + xNodeSpacing;
 
+  const totalNodeWidth =
+    numNodes && firstParent
+      ? calls.map((call) => call.width - 1).reduce((p, c) => p + c)
+      : 0;
+
+  const offset =
+    // eslint-disable-next-line no-nested-ternary
+    totalNodeWidth > 0
+      ? (totalNodeWidth * xIncrement) / 2
+      : numNodes > 1
+      ? (numNodes * xIncrement) / 2
+      : 0;
+
   // X position for the first node on the left, centered around the parent node's x (baseX)
-  const startingX =
-    baseX - (numNodes > 1 ? (numNodes / 2) * xIncrement - xIncrement / 2 : 0);
+  const startingX = baseX - offset;
 
   calls.forEach((call, i) => {
-    const x = startingX + i * xIncrement + call.width * xIncrement;
+    const x =
+      startingX +
+      i * xIncrement +
+      (firstParent ? (call.width * xIncrement) / 2 : 0);
+
+    console.log(call, x, i);
+
     const y = baseY + yNodeSpacing;
+
     drawFunctionGraphNode(g, call.name, x, y);
 
-    drawNodeRow(g, call.calls, x, y);
+    drawNodeRow(g, call.calls, x, y, call.name === "main");
   });
 };
 
@@ -82,7 +102,7 @@ const drawFunctionGraph = (functionCallGraph: FunctionCallGraph): void => {
   graphWithWidths.width = 0;
 
   // Traverse graph and draw all nodes
-  drawNodeRow(graphics, [graphWithWidths], baseX, baseY);
+  drawNodeRow(graphics, [graphWithWidths], baseX, baseY, true);
 };
 
 export default drawFunctionGraph;

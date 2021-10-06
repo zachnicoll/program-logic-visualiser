@@ -80,37 +80,33 @@ export const addStagePanListeners = (app: Application): void => {
   let prevX = 0;
   let prevY = 0;
 
-  app.renderer.plugins.interaction.on(
-    "mousedown",
-    (event: InteractionEvent) => {
-      isDragging = true;
+  const { interaction } = app.renderer.plugins;
 
+  interaction.on("mousedown", (event: InteractionEvent) => {
+    isDragging = true;
+
+    const { x, y } = event.data.global;
+    prevX = x;
+    prevY = y;
+  });
+
+  interaction.on("mousemove", (event: InteractionEvent) => {
+    if (isDragging) {
       const { x, y } = event.data.global;
+
+      graphics.position.x += x - prevX;
+      graphics.position.y += y - prevY;
+
       prevX = x;
       prevY = y;
     }
-  );
+  });
 
-  app.renderer.plugins.interaction.on(
-    "mousemove",
-    (event: InteractionEvent) => {
-      if (isDragging) {
-        const { x, y } = event.data.global;
-
-        graphics.position.x += x - prevX;
-        graphics.position.y += y - prevY;
-
-        prevX = x;
-        prevY = y;
-      }
-    }
-  );
-
-  app.renderer.plugins.interaction.on("mouseup", () => {
+  interaction.on("mouseup", () => {
     isDragging = false;
   });
 
-  app.renderer.plugins.interaction.on("mouseout", () => {
+  interaction.on("mouseout", () => {
     isDragging = false;
   });
 };
