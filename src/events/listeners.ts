@@ -45,6 +45,7 @@ func main() does
   b()
   c()
   d()
+end
   `;
 
   textarea.addEventListener("keydown", (e) => {

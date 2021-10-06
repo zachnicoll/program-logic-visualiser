@@ -22,7 +22,7 @@ const analyseFunction = (
 
   const funcGraph: FunctionCallGraph = {
     name: functionName,
-    calls: []
+    calls: [],
   };
 
   for (let i = 0; i < funcLines.length; i += 1) {

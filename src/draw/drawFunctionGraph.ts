@@ -41,7 +41,20 @@ const drawNodeRow = (
   });
 };
 
-const nodeColumnWidth = (functionCallGraph: FunctionCallGraph): any => {
+const maxChildWidth = (graph: FunctionCallGraph): void => {
+  graph.width = graph.calls.length
+    ? Math.max(
+        graph.width,
+        graph.calls.map((call) => call.width).reduce((p, c) => p + c)
+      )
+    : graph.width;
+
+  graph.calls.forEach(maxChildWidth);
+};
+
+const nodeColumnWidth = (
+  functionCallGraph: FunctionCallGraph
+): FunctionCallGraph => {
   const fcg = functionCallGraph;
 
   // Recursively re-assign all the nodes in the graph with an object containing that node's width
@@ -49,8 +62,9 @@ const nodeColumnWidth = (functionCallGraph: FunctionCallGraph): any => {
     fcg.calls[i] = nodeColumnWidth(call);
   });
 
-  // Node width is defined by the number of child nodes, and is used for drawing the graph with even spacing
+  // Node width is equivalent to maximum number of child nodes in a row of nodes
   fcg.width = fcg.calls.length;
+  maxChildWidth(fcg);
 
   return fcg;
 };
@@ -65,10 +79,8 @@ const drawFunctionGraph = (functionCallGraph: FunctionCallGraph): void => {
 
   const graphWithWidths = nodeColumnWidth(functionCallGraph);
 
-  console.log(graphWithWidths);
-
   // Traverse graph and draw all nodes
-  drawNodeRow(graphics, [functionCallGraph], baseX, baseY);
+  drawNodeRow(graphics, [graphWithWidths], baseX, baseY);
 };
 
 export default drawFunctionGraph;
