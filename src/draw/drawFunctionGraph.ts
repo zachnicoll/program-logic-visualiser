@@ -33,7 +33,7 @@ const drawNodeRow = (
     baseX - (numNodes > 1 ? (numNodes / 2) * xIncrement - xIncrement / 2 : 0);
 
   calls.forEach((call, i) => {
-    const x = startingX + i * xIncrement;
+    const x = startingX + i * xIncrement + call.width * xIncrement;
     const y = baseY + yNodeSpacing;
     drawFunctionGraphNode(g, call.name, x, y);
 
@@ -78,6 +78,8 @@ const drawFunctionGraph = (functionCallGraph: FunctionCallGraph): void => {
   const baseX = middleCanvas;
 
   const graphWithWidths = nodeColumnWidth(functionCallGraph);
+
+  graphWithWidths.width = 0;
 
   // Traverse graph and draw all nodes
   drawNodeRow(graphics, [graphWithWidths], baseX, baseY);
