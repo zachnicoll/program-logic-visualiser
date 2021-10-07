@@ -1,5 +1,3 @@
-import { Application, InteractionEvent } from "pixi.js";
-import { graphics } from "../draw";
 import { onGenerateClick } from "./onClick";
 
 const DEFAULT_TEXT = `
@@ -18,8 +16,6 @@ end
 
 func d() does
   perform D_ACTION
-	b()
-	a()
 	e()
 	f()
 	g()
@@ -50,6 +46,7 @@ const textAreaListeners = (): void => {
   // Make sure tab-presses are inputted as tabs
   const textarea = document.getElementById("code-input") as HTMLTextAreaElement;
 
+  // Set default value for text area
   textarea.value = DEFAULT_TEXT;
 
   textarea.addEventListener("keydown", (e) => {
@@ -73,42 +70,6 @@ const textAreaListeners = (): void => {
 const buttonListeners = (): void => {
   const generateButton = document.getElementById("generate-button");
   generateButton.addEventListener("click", onGenerateClick);
-};
-
-export const addStagePanListeners = (app: Application): void => {
-  let isDragging = false;
-  let prevX = 0;
-  let prevY = 0;
-
-  const { interaction } = app.renderer.plugins;
-
-  interaction.on("mousedown", (event: InteractionEvent) => {
-    isDragging = true;
-
-    const { x, y } = event.data.global;
-    prevX = x;
-    prevY = y;
-  });
-
-  interaction.on("mousemove", (event: InteractionEvent) => {
-    if (isDragging) {
-      const { x, y } = event.data.global;
-
-      graphics.position.x += x - prevX;
-      graphics.position.y += y - prevY;
-
-      prevX = x;
-      prevY = y;
-    }
-  });
-
-  interaction.on("mouseup", () => {
-    isDragging = false;
-  });
-
-  interaction.on("mouseout", () => {
-    isDragging = false;
-  });
 };
 
 const initialiseEventListeners = (): void => {
