@@ -1,32 +1,3 @@
-/* eslint-disable no-use-before-define */
-
-type FunctionCallGraphCalledBy = {
-  name: string;
-  calls: FunctionCallGraph[];
-  isCalledBy: string;
-};
-
-type IsConditionallyCalled = {
-  conditionallyCalled: true;
-  callCondition: string;
-};
-
-type IsNotConditionallyCalled = {
-  conditionallyCalled: false;
-};
-
-// export type FunctionCallGraph =
-//   | {
-//       width?: number;
-//     } & (
-//       | {
-//           name: string;
-//           calls: FunctionCallGraph[];
-//         }
-//       | (FunctionCallGraphCalledBy &
-//           (IsNotConditionallyCalled | IsConditionallyCalled))
-//     );
-
 type ArrowType =
   | "arrow"
   | "bar"
@@ -40,20 +11,31 @@ type ArrowType =
   | "inv_triangle"
   | "vee";
 
-type GraphNode = {
+export type GraphNode = {
   id: string;
   label: string;
 };
 
-type GraphEdge = {
+type ArrowOptions = {
+  enabled: boolean;
+  type: ArrowType;
+  scaleFactor?: number;
+};
+
+export type GraphEdge = {
   from: string;
   to: string;
   dashes?: boolean | number[];
+  label?: string;
+  font?: {
+    color?: string;
+    size?: number;
+    face?: string;
+    background?: string;
+  };
   arrows?: {
-    to: {
-      enabled: boolean;
-      type: ArrowType;
-    };
+    to: ArrowOptions;
+    middle?: ArrowOptions;
   };
 };
 
@@ -61,3 +43,10 @@ export type FunctionCallGraph = {
   nodes: GraphNode[];
   edges: GraphEdge[];
 };
+
+export enum StatementType {
+  FUNCTION,
+  IF,
+  FOR,
+  WHILE
+}

@@ -1,3 +1,5 @@
+import { funcDeclarationRegex } from "./regex";
+
 type FunctionInformation = {
   parameters: string[];
   startIndex: number; // Index in string where declaration starts, the beginning of 'func'
@@ -9,12 +11,10 @@ export interface FunctionDeclarationMap {
 }
 
 const tokenize = (sourceCodeText: string): FunctionDeclarationMap => {
-  const funcDeclarationRegex =
-    /func ([a-zA-Z_]+)(\((?:[a-zA-Z_ ]+[,]?)*\)) does\n/g;
-
   const functions: FunctionDeclarationMap = {};
 
   let newMatch = funcDeclarationRegex.exec(sourceCodeText);
+
   while (newMatch !== null) {
     const funcName: string | undefined = newMatch[1];
     const funcParamsStr: string | undefined = newMatch[2];
@@ -37,7 +37,7 @@ const tokenize = (sourceCodeText: string): FunctionDeclarationMap => {
         functions[funcName] = {
           parameters: funcParams,
           startIndex: newMatch.index,
-          endIndex: newMatch.index + newMatch[0].length,
+          endIndex: newMatch.index + newMatch[0].length
         };
       } else {
         throw new Error("Invalid function parameter declaration!");

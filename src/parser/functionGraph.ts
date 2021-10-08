@@ -1,9 +1,7 @@
+import { STATEMENT_END, ENTRY_POINT } from "utils/constants";
+import { ifStatementRegex, functionCallRegex } from "./regex";
 import { FunctionDeclarationMap } from "./tokenize";
-import { FunctionCallGraph } from "./types";
-
-export const ENTRY_POINT = "main";
-
-const functionCallRegex = /[a-zA-Z_]+\((?:[a-zA-Z_ ]+[,]?)*\)/g;
+import { FunctionCallGraph, StatementType } from "./types";
 
 const analyseFunction = (
   functionName: string,
@@ -28,21 +26,42 @@ const analyseFunction = (
     edges: []
   };
 
+  // Count how many STATEMENT_END tokens needed until function ends
+  const statements: StatementType[] = [];
+
   for (let i = 0; i < funcLines.length; i += 1) {
-    const line = funcLines[i];
-    if (line.localeCompare("end") === 0) break;
+    const line = funcLines[i].trim();
 
-    const trimmedLine = line.trim();
+    if (line.localeCompare(STATEMENT_END) === 0) {
+      // Break early if we reach the last STATEMENT_END keyword
+      if (statements.length === 0) {
+        break;
+      } else {
+        statements.shift();
+      }
+    }
 
-    // Found a function call in the source code text
-    if (functionCallRegex.test(trimmedLine)) {
-      const callFuncName = trimmedLine.split("(")[0];
+    // Found an if statement
+    if (ifStatementRegex.test(line)) {
+      statements.unshift(StatementType.IF);
+    }
+
+    // Found a function call e.g. a(x, y)
+    else if (functionCallRegex.test(line)) {
+      const callFuncName = line.split("(")[0];
+
+      const isConditional = statements.includes(StatementType.IF);
 
       // We've found an edge from this function to another function
       funcGraph.edges.push({
         from: functionName,
         to: callFuncName,
-        // TODO: Add conditional call check here, and make line dashed if so
+        dashes: isConditional,
+        label: isConditional ? "?" : "",
+        font: {
+          face: "Overpass Mono",
+          size: 24
+        },
         arrows: {
           to: {
             enabled: true,
@@ -64,7 +83,8 @@ const analyseFunction = (
       const uniqueNodes: FunctionCallGraph["nodes"] = [];
 
       combinedNodes.forEach((n) => {
-        if (!uniqueNodes.find((un) => un.id === n.id)) uniqueNodes.push(n);
+        if (!uniqueNodes.find((un) => un.id.localeCompare(n.id) === 0))
+          uniqueNodes.push(n);
       });
 
       funcGraph.nodes = uniqueNodes;

@@ -1,12 +1,13 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin-advanced");
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
   context: path.resolve(__dirname, "src"),
   entry: ["./index.ts", "./styles/index.scss"],
   devtool: "inline-source-map",
-  resolve: { extensions: [".ts", ".js"] },
+  resolve: { extensions: [".ts", ".js"], plugins: [new TsconfigPathsPlugin({ baseUrl: './src' })] },
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "app.bundle.js",
