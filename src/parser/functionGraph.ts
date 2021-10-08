@@ -27,70 +27,76 @@ const analyseFunction = (
   };
 
   // Count how many STATEMENT_END tokens needed until function ends
-  const statements: StatementType[] = [];
+  const statements: { type: StatementType; condition: string }[] = [];
 
   for (let i = 0; i < funcLines.length; i += 1) {
     const line = funcLines[i].trim();
 
-    if (line.localeCompare(STATEMENT_END) === 0) {
-      // Break early if we reach the last STATEMENT_END keyword
-      if (statements.length === 0) {
-        break;
-      } else {
-        statements.shift();
-      }
-    }
-
-    // Found an if statement
-    if (ifStatementRegex.test(line)) {
-      statements.unshift(StatementType.IF);
-    }
-
-    // Found a function call e.g. a(x, y)
-    else if (functionCallRegex.test(line)) {
-      const callFuncName = line.split("(")[0];
-
-      const isConditional = statements.includes(StatementType.IF);
-
-      // We've found an edge from this function to another function
-      funcGraph.edges.push({
-        from: functionName,
-        to: callFuncName,
-        dashes: isConditional,
-        label: isConditional ? "?" : "",
-        font: {
-          face: "Overpass Mono",
-          size: 24
-        },
-        arrows: {
-          to: {
-            enabled: true,
-            type: "arrow"
-          }
+    // This line isn't a comment
+    if (!line.startsWith("//")) {
+      if (line.localeCompare(STATEMENT_END) === 0) {
+        // Break if we reach the last STATEMENT_END keyword, there are no more lines
+        // left to analyse in this function (the function declaration has ended)
+        if (statements.length === 0) {
+          break;
+        } else {
+          statements.shift();
         }
-      });
+      }
+      // Found an if statement
+      if (line.search(ifStatementRegex) !== -1) {
+        const [, ...groups] = ifStatementRegex.exec(line);
+        statements.unshift({
+          type: StatementType.IF,
+          condition: groups.join(" ")
+        });
+      }
 
-      // This creates a recursive loop to analyse every function inside every function
-      const nextAnalysedFunc = analyseFunction(
-        callFuncName,
-        functionDeclarations,
-        sourceCode
-      );
+      // Found a function call e.g. a(x, y)
+      else if (functionCallRegex.test(line)) {
+        const callFuncName = line.split("(")[0];
 
-      // Need all of the nodes found inside the next analysed function in the 'parent'
-      // funcGraph object, so combine them and then make sure there isn't any duplicates
-      const combinedNodes = [...funcGraph.nodes, ...nextAnalysedFunc.nodes];
-      const uniqueNodes: FunctionCallGraph["nodes"] = [];
+        // This always finds the correct if-statement because the last if-statment called
+        // will appear first in the statements array!
+        const conditional = statements.find((s) => s.type === StatementType.IF);
 
-      combinedNodes.forEach((n) => {
-        if (!uniqueNodes.find((un) => un.id.localeCompare(n.id) === 0))
-          uniqueNodes.push(n);
-      });
+        // Does this function call itself?
+        const selfReferential = functionName.localeCompare(callFuncName) === 0;
 
-      funcGraph.nodes = uniqueNodes;
+        // We've found an edge from this function to another function
+        funcGraph.edges.push({
+          from: functionName,
+          to: callFuncName,
+          dashes: !!conditional,
+          label: conditional ? "?" : "",
+          title: conditional ? conditional.condition : undefined,
+          selfReferential
+        });
 
-      // Also merge edges
-      funcGraph.edges = [...funcGraph.edges, ...nextAnalysedFunc.edges];
+        if (!selfReferential) {
+          // This creates a recursive loop to analyse every function inside every function
+          const nextAnalysedFunc = analyseFunction(
+            callFuncName,
+            functionDeclarations,
+            sourceCode
+          );
+
+          // Need all of the nodes found inside the next analysed function in the 'parent'
+          // funcGraph object, so combine them and then make sure there isn't any duplicates
+          const combinedNodes = [...funcGraph.nodes, ...nextAnalysedFunc.nodes];
+          const uniqueNodes: FunctionCallGraph["nodes"] = [];
+
+          combinedNodes.forEach((n) => {
+            if (!uniqueNodes.find((un) => un.id.localeCompare(n.id) === 0))
+              uniqueNodes.push(n);
+          });
+
+          funcGraph.nodes = uniqueNodes;
+
+          // Also merge edges
+          funcGraph.edges = [...funcGraph.edges, ...nextAnalysedFunc.edges];
+        }
+      }
     }
   }
 

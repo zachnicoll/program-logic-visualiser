@@ -1,3 +1,5 @@
+import { EdgeOptions } from "vis-network/standalone";
+
 type ArrowType =
   | "arrow"
   | "bar"
@@ -16,28 +18,11 @@ export type GraphNode = {
   label: string;
 };
 
-type ArrowOptions = {
-  enabled: boolean;
-  type: ArrowType;
-  scaleFactor?: number;
-};
-
 export type GraphEdge = {
   from: string;
   to: string;
-  dashes?: boolean | number[];
-  label?: string;
-  font?: {
-    color?: string;
-    size?: number;
-    face?: string;
-    background?: string;
-  };
-  arrows?: {
-    to: ArrowOptions;
-    middle?: ArrowOptions;
-  };
-};
+  selfReferential: boolean;
+} & EdgeOptions;
 
 export type FunctionCallGraph = {
   nodes: GraphNode[];

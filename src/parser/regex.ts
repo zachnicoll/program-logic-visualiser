@@ -10,6 +10,8 @@ export const funcDeclarationRegex =
 export const functionCallRegex = /[a-zA-Z_]+\((?:[a-zA-Z_ ]+[,]?)*\)/g;
 
 /**
+ * Groups left side, conditional symbol, and right side of statement e.g.
+ * if (x) (==) (true) then
  * @example if x == true then
  */
 export const ifStatementRegex =

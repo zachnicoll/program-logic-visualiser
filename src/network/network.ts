@@ -5,7 +5,9 @@ import { ENTRY_POINT } from "utils/constants";
 import {
   ENTRY_POINT_STYLE,
   DEAFULT_NODE_STYLE,
-  DEFAULT_NETWORK_OPTIONS
+  DEFAULT_NETWORK_OPTIONS,
+  DEFAULT_EDGE_STYLE,
+  SELF_REFERENTIAL_EDGE_STYLE
 } from "./defaults";
 
 let network: Network | null = null;
@@ -18,13 +20,23 @@ const createNetwork = (graph: FunctionCallGraph): void => {
   // create an array with nodes
   const nodes = new DataSet(
     graph.nodes.map((node) => ({
-      ...node,
-      ...(node.id === ENTRY_POINT ? ENTRY_POINT_STYLE : DEAFULT_NODE_STYLE)
+      ...(node.id === ENTRY_POINT ? ENTRY_POINT_STYLE : DEAFULT_NODE_STYLE),
+      ...node
     }))
   );
 
   // create an array with edges
-  const edges = new DataSet(graph.edges.map((e, i) => ({ ...e, id: i })));
+  const edges = new DataSet(
+    graph.edges.map((e, i) => {
+      let styledEdge = { ...DEFAULT_EDGE_STYLE, ...e, id: i };
+
+      if (styledEdge.selfReferential) {
+        styledEdge = { ...styledEdge, ...SELF_REFERENTIAL_EDGE_STYLE };
+      }
+
+      return styledEdge;
+    })
+  );
 
   // create a network
   const container = document.getElementById("visjs-container");

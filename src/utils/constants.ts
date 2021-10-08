@@ -29,6 +29,7 @@ end
 
 func g() does
   perform G_ACTION
+  g()
 end
 
 func main() does
