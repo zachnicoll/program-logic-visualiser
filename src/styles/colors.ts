@@ -3,6 +3,7 @@ export default {
   lime: "#73F055FF",
   yellow: "#FDE725FF",
   red: "#BC3754",
+  purple: "#57106E",
   black: "#000",
   white: "#FFF"
 };

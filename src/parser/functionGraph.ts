@@ -66,7 +66,7 @@ const analyseFunction = (
         const selfReferential = functionName.localeCompare(callFuncName) === 0;
 
         // Recursion detected if the same from and to destinations already exist
-        const recursive = prevEdges.find(
+        const recursive = prevEdges.some(
           (e) =>
             e.from.localeCompare(functionName) === 0 &&
             e.to.localeCompare(callFuncName) === 0
@@ -105,9 +105,6 @@ const analyseFunction = (
           });
 
           funcGraph.nodes = uniqueNodes;
-
-          // Also merge edges
-          // funcGraph.edges = [...funcGraph.edges, ...nextAnalysedFunc.edges];
         }
       }
     }

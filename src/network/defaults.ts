@@ -10,7 +10,7 @@ export const DEAFULT_NODE_STYLE: NodeOptions = {
   color: {
     background: colors.white,
     border: colors.green,
-    hover: { background: colors.yellow }
+    hover: { background: colors.green }
   }
 };
 
@@ -19,7 +19,7 @@ export const ENTRY_POINT_STYLE = {
   color: {
     background: colors.lime,
     border: colors.green,
-    hover: { background: colors.yellow }
+    hover: { background: colors.green }
   }
 };
 
