@@ -29,7 +29,8 @@ export const DEFAULT_NETWORK_OPTIONS: Options = {
   layout: {
     hierarchical: {
       enabled: true,
-      nodeSpacing: 200
+      nodeSpacing: 200,
+      edgeMinimization: false
     }
   }
 };

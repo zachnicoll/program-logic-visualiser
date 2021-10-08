@@ -1,12 +1,13 @@
 import { STATEMENT_END, ENTRY_POINT } from "utils/constants";
 import { ifStatementRegex, functionCallRegex } from "./regex";
 import { FunctionDeclarationMap } from "./tokenize";
-import { FunctionCallGraph, StatementType } from "./types";
+import { FunctionCallGraph, GraphEdge, StatementType } from "./types";
 
 const analyseFunction = (
   functionName: string,
   functionDeclarations: FunctionDeclarationMap,
-  sourceCode: string
+  sourceCode: string,
+  prevEdges: GraphEdge[]
 ): FunctionCallGraph => {
   if (!functionDeclarations[functionName]) {
     throw new Error(`No function declaration for '${functionName} ()' found!`);
@@ -45,7 +46,8 @@ const analyseFunction = (
       }
       // Found an if statement
       if (line.search(ifStatementRegex) !== -1) {
-        const [, ...groups] = ifStatementRegex.exec(line);
+        // Array takes the form [fullMatch, g1, g2, g3]
+        const [, ...groups] = new RegExp(ifStatementRegex).exec(line);
         statements.unshift({
           type: StatementType.IF,
           condition: groups.join(" ")
@@ -53,7 +55,7 @@ const analyseFunction = (
       }
 
       // Found a function call e.g. a(x, y)
-      else if (functionCallRegex.test(line)) {
+      else if (new RegExp(functionCallRegex).test(line)) {
         const callFuncName = line.split("(")[0];
 
         // This always finds the correct if-statement because the last if-statment called
@@ -63,22 +65,33 @@ const analyseFunction = (
         // Does this function call itself?
         const selfReferential = functionName.localeCompare(callFuncName) === 0;
 
-        // We've found an edge from this function to another function
-        funcGraph.edges.push({
+        // Recursion detected if the same from and to destinations already exist
+        const recursive = prevEdges.find(
+          (e) =>
+            e.from.localeCompare(functionName) === 0 &&
+            e.to.localeCompare(callFuncName) === 0
+        );
+
+        const edge: GraphEdge = {
           from: functionName,
           to: callFuncName,
           dashes: !!conditional,
           label: conditional ? "?" : "",
           title: conditional ? conditional.condition : undefined,
           selfReferential
-        });
+        };
 
-        if (!selfReferential) {
+        // We've found an edge from this function to another function
+        // Only keep track of it if it doesn't already exist
+        if (!recursive) prevEdges.push(edge);
+
+        if (!selfReferential && !recursive) {
           // This creates a recursive loop to analyse every function inside every function
           const nextAnalysedFunc = analyseFunction(
             callFuncName,
             functionDeclarations,
-            sourceCode
+            sourceCode,
+            prevEdges
           );
 
           // Need all of the nodes found inside the next analysed function in the 'parent'
@@ -94,11 +107,13 @@ const analyseFunction = (
           funcGraph.nodes = uniqueNodes;
 
           // Also merge edges
-          funcGraph.edges = [...funcGraph.edges, ...nextAnalysedFunc.edges];
+          // funcGraph.edges = [...funcGraph.edges, ...nextAnalysedFunc.edges];
         }
       }
     }
   }
+
+  funcGraph.edges = prevEdges;
 
   return funcGraph;
 };
@@ -113,7 +128,7 @@ const functionGraph = (
     );
   }
 
-  return analyseFunction(ENTRY_POINT, functionDeclarations, sourceCode);
+  return analyseFunction(ENTRY_POINT, functionDeclarations, sourceCode, []);
 };
 
 export default functionGraph;

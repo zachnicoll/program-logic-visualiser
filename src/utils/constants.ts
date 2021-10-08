@@ -25,6 +25,8 @@ end
 
 func f() does
   perform F_ACTION
+  g()
+  c()
 end
 
 func g() does
@@ -35,14 +37,15 @@ end
 func main() does
   perform HELLO_WORLD
 
-  if x == true then
-  	e()
-  end
-
   a()
-  b()
-  c()
+
+  if x == true then
+  	b()
+    c()
+  end
+  
   d()
+  e()
 end
   `;
 
