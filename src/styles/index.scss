@@ -1,4 +1,5 @@
 @import "./colors.scss";
+@import "./codemirror.scss";
 
 * {
   box-sizing: border-box;
@@ -20,9 +21,14 @@ body {
 
 .grid-container {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 3fr;
   grid-template-rows: 1fr;
-  height: 100%;
+  height: 95vh;
+}
+
+.code-container {
+  display: flex;
+  flex-direction: column;
 }
 
 #src-code-title-container {
@@ -35,42 +41,27 @@ body {
   }
 }
 
-textarea {
-  position: relative;
-  border: none;
-  width: 100%;
-  height: calc(100% - 41px - 53px);
-  background-color: $navajo_white;
-  padding: 0px;
-  padding-top: 0.2em;
-  padding-left: 0.2em;
-  resize: none;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-textarea:focus-visible {
-  outline: none;
-}
-
-textarea,
-pre {
-  -moz-tab-size: 2;
-  -o-tab-size: 2;
-  tab-size: 2;
-}
-
 #generate-button {
   display: block;
-  background-color: $dark_chocolate;
-  color: $mint;
+  background-color: $lime;
+  color: $black;
+
   border: none;
+  border-bottom: 1px solid black;
+
   width: 100%;
-  height: 48px;
+  height: 5vh;
+
+  &:hover {
+    background-color: $green;
+  }
+
+  &:active {
+    border: 2px $black inset;
+  }
 }
 
 #visjs-container {
   width: 100%;
-  height: 100vh;
-  border: 1px solid lightgray;
+  height: 95vh;
 }

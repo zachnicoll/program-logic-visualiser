@@ -1,10 +1,10 @@
+import editor from "index";
 import createNetwork from "../network/network";
 import functionGraph from "../parser/functionGraph";
 import tokenize from "../parser/tokenize";
 
 export const onGenerateClick = (): void => {
-  const textarea = document.getElementById("code-input") as HTMLTextAreaElement;
-  const sourceCodeText = textarea.value;
+  const sourceCodeText = editor.getValue();
 
   try {
     const tokens = tokenize(sourceCodeText);

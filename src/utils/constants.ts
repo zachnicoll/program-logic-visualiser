@@ -1,5 +1,4 @@
-export const DEFAULT_TEXT = `
-func a() does
+export const DEFAULT_TEXT = `func a() does
   perform A_ACTION
 end
 
