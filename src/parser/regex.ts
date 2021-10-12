@@ -16,3 +16,17 @@ export const functionCallRegex = /[a-zA-Z_]+\((?:[a-zA-Z_ ]+[,]?)*\)/g;
  */
 export const ifStatementRegex =
   /if ([a-zA-Z_]+) (==|!=) ([0-9]+|true|false) then/g;
+
+/**
+ * Groups variable name and variable value
+ * @example let my_variable = true
+ */
+export const variableDeclarationRegex =
+  /let ([a-zA-Z_]+) = (true|false|[a-zA-Z_]+|[0-9]+)/g;
+
+/**
+ * Groups variable name and variable value
+ * @example my_variable = true
+ */
+export const variableAssignmentRegex =
+  /([a-zA-Z_]+) = (true|false|[a-zA-Z_]+|[0-9]+)/g;

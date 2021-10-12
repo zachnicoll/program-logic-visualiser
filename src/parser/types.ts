@@ -35,3 +35,7 @@ export enum StatementType {
   FOR,
   WHILE
 }
+
+export type IfStatement = [lhs: string, condition: string, rhs: string];
+
+export type VariableDeclaration = [name: string, value: string];

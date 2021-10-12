@@ -1,7 +1,17 @@
 import { STATEMENT_END, ENTRY_POINT } from "utils/constants";
-import { ifStatementRegex, functionCallRegex } from "./regex";
+import {
+  ifStatementRegex,
+  functionCallRegex,
+  variableDeclarationRegex
+} from "./regex";
 import { FunctionDeclarationMap } from "./tokenize";
-import { FunctionCallGraph, GraphEdge, StatementType } from "./types";
+import {
+  FunctionCallGraph,
+  GraphEdge,
+  IfStatement,
+  StatementType,
+  VariableDeclaration
+} from "./types";
 
 const analyseFunction = (
   functionName: string,
@@ -30,6 +40,9 @@ const analyseFunction = (
   // Count how many STATEMENT_END tokens needed until function ends
   const statements: { type: StatementType; condition: string }[] = [];
 
+  // Map of variables that have been declared and their values
+  const variables: Record<string, number | boolean> = {};
+
   for (let i = 0; i < funcLines.length; i += 1) {
     const line = funcLines[i].trim();
 
@@ -44,14 +57,45 @@ const analyseFunction = (
           statements.shift();
         }
       }
+
       // Found an if statement
       if (line.search(ifStatementRegex) !== -1) {
-        // Array takes the form [fullMatch, g1, g2, g3]
+        // Array takes the form [fullMatch, lhs, condition, rhs]
         const [, ...groups] = new RegExp(ifStatementRegex).exec(line);
+        const ifStatementInfo = groups as IfStatement;
+
         statements.unshift({
           type: StatementType.IF,
-          condition: groups.join(" ")
+          condition: ifStatementInfo.join(" ")
         });
+      }
+
+      // Found a variable declaration
+      else if (new RegExp(variableDeclarationRegex).test(line)) {
+        const [, ...groups] = new RegExp(variableDeclarationRegex).exec(line);
+        const [name, value] = groups as VariableDeclaration;
+
+        if (variables[name]) {
+          throw new Error(`Variable ${name} has already been declared.`);
+        }
+
+        let parsedValue: number | boolean;
+
+        if (value === "true" || value === "false") {
+          parsedValue = value === "true";
+        } else if (!Number.isNaN(parseInt(value, 10))) {
+          parsedValue = parseInt(value, 10);
+        }
+        // Value must be a variable reassignment, check if the reassigned var exists
+        else if (!variables[value]) {
+          throw new Error(
+            `Tried to re-assign ${value} to ${name}, but ${value} does not exist!`
+          );
+        } else {
+          parsedValue = variables[value];
+        }
+
+        variables[name] = parsedValue;
       }
 
       // Found a function call e.g. a(x, y)
@@ -109,6 +153,8 @@ const analyseFunction = (
       }
     }
   }
+
+  console.log(variables);
 
   funcGraph.edges = prevEdges;
 
