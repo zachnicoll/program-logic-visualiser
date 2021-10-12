@@ -2,7 +2,8 @@ import { STATEMENT_END, ENTRY_POINT } from "utils/constants";
 import {
   ifStatementRegex,
   functionCallRegex,
-  variableDeclarationRegex
+  variableDeclarationRegex,
+  variableAssignmentRegex
 } from "./regex";
 import { FunctionDeclarationMap } from "./tokenize";
 import {
@@ -10,8 +11,32 @@ import {
   GraphEdge,
   IfStatement,
   StatementType,
-  VariableDeclaration
+  VariableDeclaration,
+  VariableMap
 } from "./types";
+
+const parseVariable = (
+  rawValue: string,
+  existingVars: VariableMap
+): number | boolean => {
+  let parsedValue: number | boolean;
+
+  if (rawValue === "true" || rawValue === "false") {
+    parsedValue = rawValue === "true";
+  } else if (!Number.isNaN(parseInt(rawValue, 10))) {
+    parsedValue = parseInt(rawValue, 10);
+  }
+  // Value must be a variable reassignment, check if the reassigned var exists
+  else if (!existingVars[rawValue]) {
+    throw new Error(
+      `Tried to re-assign ${rawValue}, but ${rawValue} does not exist!`
+    );
+  } else {
+    parsedValue = existingVars[rawValue];
+  }
+
+  return parsedValue;
+};
 
 const analyseFunction = (
   functionName: string,
@@ -41,7 +66,7 @@ const analyseFunction = (
   const statements: { type: StatementType; condition: string }[] = [];
 
   // Map of variables that have been declared and their values
-  const variables: Record<string, number | boolean> = {};
+  const variables: VariableMap = {};
 
   for (let i = 0; i < funcLines.length; i += 1) {
     const line = funcLines[i].trim();
@@ -79,23 +104,19 @@ const analyseFunction = (
           throw new Error(`Variable ${name} has already been declared.`);
         }
 
-        let parsedValue: number | boolean;
+        variables[name] = parseVariable(value, variables);
+      }
 
-        if (value === "true" || value === "false") {
-          parsedValue = value === "true";
-        } else if (!Number.isNaN(parseInt(value, 10))) {
-          parsedValue = parseInt(value, 10);
-        }
-        // Value must be a variable reassignment, check if the reassigned var exists
-        else if (!variables[value]) {
-          throw new Error(
-            `Tried to re-assign ${value} to ${name}, but ${value} does not exist!`
-          );
-        } else {
-          parsedValue = variables[value];
+      // Found a variable assignment
+      else if (new RegExp(variableAssignmentRegex).test(line)) {
+        const [, ...groups] = new RegExp(variableAssignmentRegex).exec(line);
+        const [name, value] = groups as VariableDeclaration;
+
+        if (!variables[name]) {
+          throw new Error(`Variable ${name} has not been declared!`);
         }
 
-        variables[name] = parsedValue;
+        variables[name] = parseVariable(value, variables);
       }
 
       // Found a function call e.g. a(x, y)

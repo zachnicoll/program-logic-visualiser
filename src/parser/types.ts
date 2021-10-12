@@ -39,3 +39,5 @@ export enum StatementType {
 export type IfStatement = [lhs: string, condition: string, rhs: string];
 
 export type VariableDeclaration = [name: string, value: string];
+
+export type VariableMap = Record<string, number | boolean>;
