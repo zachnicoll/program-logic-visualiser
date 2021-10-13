@@ -1,7 +1,8 @@
 import { DataSet } from "vis-data";
 import { Network, Data } from "vis-network/standalone";
-import { FunctionCallGraph } from "parser/types";
+import { FunctionCallGraph, GraphNode } from "parser/types";
 import { ENTRY_POINT } from "utils/constants";
+import logicDiagram from "parser/logicDiagram";
 import {
   ENTRY_POINT_STYLE,
   DEAFULT_NODE_STYLE,
@@ -48,6 +49,13 @@ const createNetwork = (graph: FunctionCallGraph): void => {
 
   // This attaches the canvas to the container element
   network = new Network(container, data, DEFAULT_NETWORK_OPTIONS);
+
+  network.on("click", (properties) => {
+    const ids = properties.nodes;
+    const clickedNode: GraphNode = nodes.get(ids)[0];
+
+    logicDiagram(clickedNode.lines);
+  });
 };
 
 export default createNetwork;

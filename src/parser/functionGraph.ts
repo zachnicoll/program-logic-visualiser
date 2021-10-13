@@ -54,11 +54,11 @@ const analyseFunction = (
     sourceCode.length
   );
 
-  const funcLines = startOfFunction.split("\n");
+  const sourceLines = startOfFunction.split("\n");
 
   const funcGraph: FunctionCallGraph = {
     // Nodes get labelled like 'main()'
-    nodes: [{ id: functionName, label: `${functionName}()` }],
+    nodes: [{ id: functionName, label: `${functionName}()`, lines: [] }],
     edges: []
   };
 
@@ -68,8 +68,10 @@ const analyseFunction = (
   // Map of variables that have been declared and their values
   const variables: VariableMap = {};
 
-  for (let i = 0; i < funcLines.length; i += 1) {
-    const line = funcLines[i].trim();
+  for (let i = 0; i < sourceLines.length; i += 1) {
+    const line = sourceLines[i].trim();
+
+    funcGraph.nodes[0].lines.push(line);
 
     // This line isn't a comment
     if (!line.startsWith("//")) {
@@ -174,8 +176,6 @@ const analyseFunction = (
       }
     }
   }
-
-  console.log(variables);
 
   funcGraph.edges = prevEdges;
 

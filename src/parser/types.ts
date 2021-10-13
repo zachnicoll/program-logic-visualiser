@@ -1,21 +1,9 @@
 import { EdgeOptions } from "vis-network/standalone";
 
-type ArrowType =
-  | "arrow"
-  | "bar"
-  | "circle"
-  | "box"
-  | "crow"
-  | "curve"
-  | "inv_curve"
-  | "diamond"
-  | "triangle"
-  | "inv_triangle"
-  | "vee";
-
 export type GraphNode = {
   id: string;
   label: string;
+  lines: string[];
 };
 
 export type GraphEdge = {
