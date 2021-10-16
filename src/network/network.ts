@@ -37,7 +37,11 @@ const onNodeClick = (
     );
 
     const edgesData = new DataSet(
-      diagram.edges.map((e) => ({ ...e, id: `${e.from}->${e.to}` }))
+      diagram.edges.map((e) => ({
+        ...e,
+        ...DEFAULT_EDGE_STYLE,
+        id: `${e.from}->${e.to}`
+      }))
     );
 
     const data: Data = {

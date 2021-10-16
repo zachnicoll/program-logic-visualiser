@@ -59,6 +59,10 @@ export const DEFAULT_EDGE_STYLE: EdgeOptions = {
       enabled: true,
       type: "arrow"
     }
+  },
+  color: {
+    color: colors.green,
+    hover: colors.green
   }
 };
 
@@ -74,8 +78,7 @@ export const DIAGRAM_NODE_TYPE_MAP: Record<LogicNodeType, NodeOptions> = {
   [LogicNodeType.START]: {
     color: {
       background: colors.lime,
-      border: colors.black,
-
+      border: colors.green,
       hover: { background: colors.lime }
     },
     shape: "hexagon"
@@ -83,8 +86,7 @@ export const DIAGRAM_NODE_TYPE_MAP: Record<LogicNodeType, NodeOptions> = {
   [LogicNodeType.STOP]: {
     color: {
       background: colors.red,
-      border: colors.black,
-
+      border: colors.red,
       hover: { background: colors.red }
     },
     shape: "hexagon"
@@ -93,7 +95,6 @@ export const DIAGRAM_NODE_TYPE_MAP: Record<LogicNodeType, NodeOptions> = {
     color: {
       background: colors.purple,
       border: colors.black,
-
       hover: { background: colors.purple }
     },
     shape: "diamond"
@@ -102,15 +103,14 @@ export const DIAGRAM_NODE_TYPE_MAP: Record<LogicNodeType, NodeOptions> = {
     color: {
       background: colors.yellow,
       border: colors.black,
-
       hover: { background: colors.yellow }
     },
-    shape: "rectangle"
+    shape: "square"
   },
   [LogicNodeType.TERMINAL]: {
     color: {
-      background: colors.green,
-      border: colors.black,
+      background: colors.white,
+      border: colors.green,
       hover: { background: colors.green }
     },
     shape: "dot"
