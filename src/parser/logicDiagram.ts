@@ -93,7 +93,7 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
           const noActionEdge: LogicEdge = {
             from: lastDecision.id,
             to: noActionNode.id,
-            label: "F"
+            label: "False"
           };
 
           nodes.push(noActionNode);
@@ -117,7 +117,7 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
           edges.push({
             from: prevNode.id,
             to: node.id,
-            label: branch === "if" ? "T" : "F"
+            label: branch === "if" ? "True" : "False"
           });
         } else {
           edges.push({

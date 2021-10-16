@@ -2,7 +2,7 @@ import { LogicNodeType } from "parser/types";
 import colors from "styles/colors";
 import { EdgeOptions, Options, NodeOptions } from "vis-network/standalone";
 
-const FONT_FACE = "Overpass Mono";
+export const FONT_FACE = "Overpass Mono";
 
 export const DEAFULT_NODE_STYLE: NodeOptions = {
   font: { face: FONT_FACE, size: 16 },
@@ -44,6 +44,7 @@ export const DEFAULT_DIAGRAM_OPTIONS: Options = {
       enabled: true,
       nodeSpacing: 200,
       edgeMinimization: false,
+      sortMethod: "directed",
       direction: "LR"
     }
   }
@@ -63,6 +64,11 @@ export const DEFAULT_EDGE_STYLE: EdgeOptions = {
   color: {
     color: colors.green,
     hover: colors.green
+  },
+  smooth: {
+    enabled: false,
+    type: "continuous",
+    roundness: 0
   }
 };
 

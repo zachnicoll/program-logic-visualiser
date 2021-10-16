@@ -10,7 +10,8 @@ import {
   DEFAULT_EDGE_STYLE,
   SELF_REFERENTIAL_EDGE_STYLE,
   DEFAULT_DIAGRAM_OPTIONS,
-  DIAGRAM_NODE_TYPE_MAP
+  DIAGRAM_NODE_TYPE_MAP,
+  FONT_FACE
 } from "./defaults";
 
 let network: Network | null = null;
@@ -40,6 +41,7 @@ const onNodeClick = (
       diagram.edges.map((e) => ({
         ...e,
         ...DEFAULT_EDGE_STYLE,
+        font: { face: FONT_FACE, size: 16 },
         id: `${e.from}->${e.to}`
       }))
     );
