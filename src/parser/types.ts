@@ -12,9 +12,33 @@ export type GraphEdge = {
   selfReferential: boolean;
 } & EdgeOptions;
 
+export enum LogicNodeType {
+  START, // First node
+  STOP, // Last node (or 'end' statement)
+  DECISION, // If statement node
+  PROCESS, // perform action statement node
+  TERMINAL // Other function calls node
+}
+
+export type LogicNode = {
+  id: string;
+  label: string;
+  type: LogicNodeType;
+};
+
+export type LogicEdge = {
+  from: string;
+  to: string;
+} & EdgeOptions;
+
 export type FunctionCallGraph = {
   nodes: GraphNode[];
   edges: GraphEdge[];
+};
+
+export type LogicDiagram = {
+  nodes: LogicNode[];
+  edges: LogicEdge[];
 };
 
 export enum StatementType {

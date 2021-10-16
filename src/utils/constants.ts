@@ -13,9 +13,9 @@ end
 
 func d() does
   perform D_ACTION
-	e()
-	f()
-	g()
+  e()
+  f()
+  g()
 end
 
 func e() does
