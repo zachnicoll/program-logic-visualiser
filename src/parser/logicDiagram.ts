@@ -1,11 +1,11 @@
-import { actionRegex, functionCallRegex, ifStatementRegex } from "./regex";
+import { STATEMENT_END } from "utils/constants";
 import {
-  LogicNode,
-  GraphEdge,
-  LogicNodeType,
-  LogicEdge,
-  LogicDiagram
-} from "./types";
+  actionRegex,
+  elseRegex,
+  functionCallRegex,
+  ifStatementRegex
+} from "./regex";
+import { LogicNode, LogicNodeType, LogicEdge, LogicDiagram } from "./types";
 
 const START_NODE: LogicNode = {
   id: "START",
@@ -23,7 +23,12 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
   const nodes: LogicNode[] = [START_NODE];
   const edges: LogicEdge[] = [];
 
-  let prevNode = nodes[0];
+  let prevNodes = [nodes[0]];
+
+  let branch: "if" | "else" | null = null;
+  let branchCount = 0;
+
+  const lastIfNodes: LogicNode[][] = [];
 
   const noEmptyLines = funcLines.filter((line) => line.length);
 
@@ -58,23 +63,82 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
         label: `${lhs} ${condition} ${rhs}`,
         type: LogicNodeType.DECISION
       };
+
+      branch = "if";
+      branchCount += 1;
+    } else if (new RegExp(elseRegex).test(line)) {
+      lastIfNodes.unshift([...prevNodes]);
+
+      const lastDecision = nodes.filter(
+        (n) => n.type === LogicNodeType.DECISION
+      )[branchCount - 1];
+
+      branch = "else";
+      branchCount += 1;
+
+      prevNodes = [lastDecision];
+    } else if (line.localeCompare(STATEMENT_END) === 0) {
+      if (branch) {
+        const lastDecision = nodes.filter(
+          (n) => n.type === LogicNodeType.DECISION
+        )[branchCount - 1];
+
+        if (branch === "if") {
+          const noActionNode: LogicNode = {
+            id: `${i}`,
+            label: "NO_ACTION",
+            type: LogicNodeType.PROCESS
+          };
+
+          const noActionEdge: LogicEdge = {
+            from: lastDecision.id,
+            to: noActionNode.id,
+            label: "F"
+          };
+
+          nodes.push(noActionNode);
+          edges.push(noActionEdge);
+
+          prevNodes = [...prevNodes, noActionNode];
+        } else if (lastIfNodes.length) {
+          prevNodes = [...prevNodes, ...lastIfNodes.shift()];
+        }
+
+        branchCount -= 1;
+        if (branchCount === 0) {
+          branch = null;
+        }
+      }
     }
 
     if (node) {
-      edges.push({
-        from: prevNode.id,
-        to: node.id
+      prevNodes.forEach((prevNode) => {
+        if (prevNode.type === LogicNodeType.DECISION) {
+          edges.push({
+            from: prevNode.id,
+            to: node.id,
+            label: branch === "if" ? "T" : "F"
+          });
+        } else {
+          edges.push({
+            from: prevNode.id,
+            to: node.id
+          });
+        }
       });
 
       nodes.push(node);
-      prevNode = node;
+      prevNodes = [node];
     }
   });
 
   nodes.push(STOP_NODE);
-  edges.push({
-    from: prevNode.id,
-    to: "STOP"
+
+  prevNodes.forEach((prevNode) => {
+    edges.push({
+      from: prevNode.id,
+      to: "STOP"
+    });
   });
 
   return {

@@ -41,6 +41,8 @@ func main() does
   if x == true then
   	b()
     c()
+  else
+    perform ELSE_ACTION
   end
   
   d()
