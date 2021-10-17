@@ -11,11 +11,16 @@ import {
   SELF_REFERENTIAL_EDGE_STYLE,
   DEFAULT_DIAGRAM_OPTIONS,
   DIAGRAM_NODE_TYPE_MAP,
-  FONT_FACE
+  FONT_FACE,
+  DISABLED_NODE_STYLE,
+  DISABLED_EDGE_STYLE
 } from "./defaults";
 
 let network: Network | null = null;
 
+/**
+ * Draws the Program Logic Diagram for the code inside the clicked node (function)
+ */
 const onNodeClick = (
   properties: { nodes: string[] },
   nodes: DataSet<any>
@@ -33,7 +38,8 @@ const onNodeClick = (
       diagram.nodes.map((node) => ({
         ...node,
         ...DEAFULT_NODE_STYLE,
-        ...DIAGRAM_NODE_TYPE_MAP[node.type]
+        ...DIAGRAM_NODE_TYPE_MAP[node.type],
+        ...(node.reachable === false ? DISABLED_NODE_STYLE : {})
       }))
     );
 
@@ -41,6 +47,7 @@ const onNodeClick = (
       diagram.edges.map((e) => ({
         ...e,
         ...DEFAULT_EDGE_STYLE,
+        ...(e.reachable === false ? DISABLED_EDGE_STYLE : {}),
         font: { face: FONT_FACE, size: 16 },
         id: `${e.from}->${e.to}`
       }))

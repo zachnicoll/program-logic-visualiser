@@ -15,6 +15,14 @@ export const DEAFULT_NODE_STYLE: NodeOptions = {
   }
 };
 
+export const DISABLED_NODE_STYLE: NodeOptions = {
+  color: {
+    background: colors.white,
+    border: colors.grey,
+    hover: { background: colors.grey }
+  }
+};
+
 export const ENTRY_POINT_STYLE = {
   ...DEAFULT_NODE_STYLE,
   color: {
@@ -69,6 +77,13 @@ export const DEFAULT_EDGE_STYLE: EdgeOptions = {
     enabled: false,
     type: "continuous",
     roundness: 0
+  }
+};
+
+export const DISABLED_EDGE_STYLE: EdgeOptions = {
+  color: {
+    color: colors.grey,
+    hover: colors.grey
   }
 };
 

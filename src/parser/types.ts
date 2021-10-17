@@ -25,11 +25,13 @@ export type LogicNode = {
   label: string;
   type: LogicNodeType;
   evaluates?: boolean;
+  reachable?: boolean;
 };
 
 export type LogicEdge = {
   from: string;
   to: string;
+  reachable?: boolean;
 } & EdgeOptions;
 
 export type FunctionCallGraph = {
@@ -54,3 +56,5 @@ export type IfStatement = [lhs: string, condition: string, rhs: string];
 export type VariableDeclaration = [name: string, value: string];
 
 export type VariableMap = Record<string, number | boolean>;
+
+export type Branch = { branch: "if" | "else"; decisionNode: LogicNode };

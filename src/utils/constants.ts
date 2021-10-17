@@ -1,3 +1,5 @@
+import { LogicNode, LogicNodeType } from "parser/types";
+
 export const DEFAULT_TEXT = `func a() does
   perform A_ACTION
 end
@@ -39,12 +41,19 @@ func main() does
   a()
 
   let x = false
+  let y = true
 
-  if x == true then
+  if x != y then
   	b()
     c()
-  else
-    perform ELSE_ACTION
+    
+    if x == y then
+      b()
+      c()
+  	else
+    	perform ELSE_ACTION
+  	end
+
   end
   
   d()
@@ -54,3 +63,15 @@ end
 
 export const ENTRY_POINT = "main";
 export const STATEMENT_END = "end";
+
+export const START_NODE: LogicNode = {
+  id: "START",
+  label: "START",
+  type: LogicNodeType.START
+};
+
+export const STOP_NODE: LogicNode = {
+  id: "STOP",
+  label: "STOP",
+  type: LogicNodeType.STOP
+};

@@ -1,4 +1,6 @@
-import { STATEMENT_END } from "utils/constants";
+import { START_NODE, STATEMENT_END, STOP_NODE } from "utils/constants";
+import { formatDecisionLabel } from "utils/format";
+import conditionMap from "./conditionMap";
 import {
   actionRegex,
   elseRegex,
@@ -14,56 +16,24 @@ import {
   LogicDiagram,
   VariableMap,
   VariableDeclaration,
-  IfStatement
+  IfStatement,
+  Branch
 } from "./types";
-
-const START_NODE: LogicNode = {
-  id: "START",
-  label: "START",
-  type: LogicNodeType.START
-};
-
-const STOP_NODE: LogicNode = {
-  id: "STOP",
-  label: "STOP",
-  type: LogicNodeType.STOP
-};
-
-const parseVariable = (
-  rawValue: string,
-  existingVars: VariableMap
-): number | boolean => {
-  let parsedValue: number | boolean;
-
-  if (rawValue === "true" || rawValue === "false") {
-    parsedValue = rawValue === "true";
-  } else if (!Number.isNaN(parseInt(rawValue, 10))) {
-    parsedValue = parseInt(rawValue, 10);
-  }
-  // Value must be a variable reassignment, check if the reassigned var exists
-  else if (!existingVars[rawValue]) {
-    throw new Error(
-      `Tried to re-assign ${rawValue}, but ${rawValue} does not exist!`
-    );
-  } else {
-    parsedValue = existingVars[rawValue];
-  }
-
-  return parsedValue;
-};
-
-const conditionMap = {
-  "==": (a: any, b: any): boolean => a === b,
-  "!=": (a: any, b: any): boolean => a !== b
-};
+import { parseVariable, parseValue } from "./valueParsers";
 
 const logicDiagram = (funcLines: string[]): LogicDiagram => {
+  // The START node goes first, always
   const nodes: LogicNode[] = [START_NODE];
   const edges: LogicEdge[] = [];
 
+  /**
+   * Array of nodes previously evaluated - there are cases where we want
+   * to connect multiple nodes to a single node, so we need to store them
+   * as an array.
+   */
   let prevNodes = [nodes[0]];
 
-  const branches: { branch: "if" | "else"; decisionNode: LogicNode }[] = [];
+  const branches: Branch[] = [];
 
   // Nodes that were inside the last if statement
   const lastIfNodes: LogicNode[][] = [];
@@ -129,58 +99,73 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
         );
       }
 
-      if (rhs !== "true" && rhs !== "false" && variables[rhs] === undefined) {
-        throw new Error(
-          `Tried to evaluate a condition containing ${rhs}, but ${rhs} has not been declared!`
-        );
-      }
-
       if (conditionMap[condition as keyof typeof conditionMap] === undefined) {
         throw new Error(
           `Could not recognise if-statment condition '${condition}'!`
         );
       }
 
-      const x =
-        rhs === "true" || rhs === "false" ? rhs === "true" : variables[rhs];
-      const y = variables[lhs];
+      const x = parseValue(lhs, variables);
+      const y = parseValue(rhs, variables);
 
       const evaluates = conditionMap[condition as keyof typeof conditionMap](
         x,
         y
       );
 
+      console.log({ evaluates, x, y });
+
       node = {
         id: `${i}`,
-        label: `${lhs} ${condition} ${rhs}`,
+        label: formatDecisionLabel(lhs, condition, rhs),
         type: LogicNodeType.DECISION,
         evaluates
       };
 
       branches.unshift({ branch: "if", decisionNode: node });
     } else if (new RegExp(elseRegex).test(line)) {
+      /**
+       * We've moved into an else-block, move the last nodes evaluated in the if-block
+       * to the front of the lastIfNodes array.
+       */
       lastIfNodes.unshift([...prevNodes]);
 
+      /**
+       * Shift the first branch off the stack and extract the decision node.
+       * The next node/s will connect to this node in the next iteration of the for-loop.
+       */
       const lastDecision = branches.shift().decisionNode;
-
-      branches.unshift({ branch: "else", decisionNode: lastDecision });
-
       prevNodes = [lastDecision];
+
+      /**
+       * We're now inside an else-block, so add the same decision node
+       * back with the correct branch.
+       */
+      branches.unshift({ branch: "else", decisionNode: lastDecision });
     } else if (line.localeCompare(STATEMENT_END) === 0) {
       if (branches.length) {
-        const branch = branches.shift();
+        const { branch, decisionNode } = branches.shift();
 
-        if (branch.branch === "if") {
+        if (branch === "if") {
+          /**
+           * Reached the end of an if-statement without an else-block, so add
+           * a dummy 'NO_ACTION' node to the False branch of the decision node
+           */
+
+          const reachable = decisionNode.evaluates === false;
+
           const noActionNode: LogicNode = {
             id: `${i}`,
             label: "NO_ACTION",
-            type: LogicNodeType.PROCESS
+            type: LogicNodeType.PROCESS,
+            reachable
           };
 
           const noActionEdge: LogicEdge = {
-            from: branch.decisionNode.id,
+            from: decisionNode.id,
             to: noActionNode.id,
-            label: "False"
+            label: "False",
+            reachable
           };
 
           nodes.push(noActionNode);
@@ -188,34 +173,66 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
 
           prevNodes = [...prevNodes, noActionNode];
         } else if (lastIfNodes.length) {
+          /**
+           * Reached end of else-block, shift last if-block nodes off front of array and
+           * combine them with the last nodes in the else-block. The next node will join
+           * on to all of these nodes (will usually be max 2)
+           */
           prevNodes = [...prevNodes, ...lastIfNodes.shift()];
         }
       }
     }
 
     if (node) {
+      // If there are previous nodes, connect them to this node
       prevNodes.forEach((prevNode) => {
         if (prevNode.type === LogicNodeType.DECISION) {
+          const { branch, decisionNode } = branches[0];
+
+          const reachable = !(
+            (branch === "if" && decisionNode.evaluates === false) ||
+            (branch === "else" && decisionNode.evaluates === true)
+          );
+
           edges.push({
             from: prevNode.id,
             to: node.id,
-            label: branches[0].branch === "if" ? "True" : "False"
+
+            /**
+             * If we're currently inside the 'if' block of an if-statement, then
+             * that means the if-condition has evaluated true - so show True on the
+             * edge pointing to the nodes inside the 'if' block
+             */
+            label: branches[0].branch === "if" ? "True" : "False",
+            reachable
           });
         } else {
           edges.push({
             from: prevNode.id,
-            to: node.id
+            to: node.id,
+            reachable: prevNode.reachable
           });
         }
       });
+
+      if (branches.length && node.type !== LogicNodeType.DECISION) {
+        const { branch, decisionNode } = branches[0];
+
+        const reachable = !(
+          (branch === "if" && decisionNode.evaluates === false) ||
+          (branch === "else" && decisionNode.evaluates === true)
+        );
+
+        node.reachable = reachable;
+      }
 
       nodes.push(node);
       prevNodes = [node];
     }
   });
 
+  // Insert the STOP node and connect the last node in the array to it with an edge
   nodes.push(STOP_NODE);
-
   prevNodes.forEach((prevNode) => {
     edges.push({
       from: prevNode.id,
