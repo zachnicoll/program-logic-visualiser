@@ -78,14 +78,15 @@ body {
   padding: 0.5em;
   background-color: white;
   border: solid black 1px;
+  border-radius: 1em;
 
   flex-direction: column;
 
-  h1 {
+  h2 {
     margin: 0;
   }
 
-  p {
-    margin: 0.5em 0;
+  div {
+    margin: 0.5em 0em;
   }
 }

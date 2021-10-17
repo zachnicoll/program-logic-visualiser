@@ -4,6 +4,8 @@ export const parseValue = (
   value: string,
   variables: VariableMap
 ): boolean | number => {
+  console.log(value);
+
   let x;
   if (value === "true" || value === "false") {
     x = value === "true";

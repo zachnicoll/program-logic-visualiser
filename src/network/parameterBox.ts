@@ -1,8 +1,15 @@
 import { VariableMap, GraphNode } from "parser/types";
+import { parseValue } from "parser/valueParsers";
 import { drawLogicDiagram } from "./network";
 
+let dynamicVariables: VariableMap | null = null;
+
 const showParameterBox = (variables: VariableMap, node: GraphNode): void => {
-  const inputs = Object.keys(variables).map((v) => {
+  dynamicVariables = { ...variables };
+
+  const inputs = Object.keys(dynamicVariables).map((v) => {
+    const container = document.createElement("div");
+
     const label = document.createElement("label");
     label.setAttribute("for", v);
     label.innerHTML = `${v}: `;
@@ -11,17 +18,27 @@ const showParameterBox = (variables: VariableMap, node: GraphNode): void => {
     input.setAttribute("type", "text");
     input.id = v;
     input.name = v;
-    input.value = `${variables[v]}`;
+    input.value = `${dynamicVariables[v]}`;
 
-    return { label, input };
+    input.addEventListener("input", (e) => {
+      dynamicVariables[v] = parseValue(
+        (e.target as HTMLInputElement).value,
+        {}
+      );
+    });
+
+    container.append(label);
+    container.append(input);
+
+    return container;
   });
 
-  const title = document.createElement("h1");
+  const title = document.createElement("h2");
   title.innerHTML = "Parameters";
 
   const btn = document.createElement("button");
   btn.innerHTML = "Re-Evaluate";
-  btn.onclick = (): void => drawLogicDiagram(node);
+  btn.onclick = (): void => drawLogicDiagram(node, dynamicVariables);
 
   const paramBox = document.getElementById("parameter-box");
 
@@ -29,8 +46,7 @@ const showParameterBox = (variables: VariableMap, node: GraphNode): void => {
   paramBox.append(title);
 
   // Add labels and inputs
-  inputs.forEach(({ label, input }) => {
-    paramBox.append(label);
+  inputs.forEach((input) => {
     paramBox.append(input);
   });
 

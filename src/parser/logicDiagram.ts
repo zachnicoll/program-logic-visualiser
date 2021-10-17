@@ -108,12 +108,7 @@ const logicDiagram = (
       const [, ...groups] = new RegExp(ifStatementRegex).exec(line);
       const [lhs, condition, rhs] = groups as IfStatement;
 
-      if (variables[lhs] === undefined) {
-        throw new Error(
-          `Tried to evaluate a condition containing ${lhs}, but ${lhs} has not been declared!`
-        );
-      }
-
+      // This shouldn't happen because the regex won't match the if statement, but just in case
       if (conditionMap[condition as keyof typeof conditionMap] === undefined) {
         throw new Error(
           `Could not recognise if-statment condition '${condition}'!`
@@ -254,7 +249,8 @@ const logicDiagram = (
   prevNodes.forEach((prevNode) => {
     edges.push({
       from: prevNode.id,
-      to: "STOP"
+      to: "STOP",
+      reachable: prevNode.reachable
     });
   });
 

@@ -77,6 +77,7 @@ const onNodeClick = (
 const createNetwork = (graph: FunctionCallGraph): void => {
   if (network) {
     network.destroy();
+    destroyParameterBox();
   }
 
   // create an array with nodes

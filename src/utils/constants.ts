@@ -32,7 +32,9 @@ end
 
 func g() does
   perform G_ACTION
-  g()
+  if 5 > 10 then
+    g()
+  end
 end
 
 func main() does
