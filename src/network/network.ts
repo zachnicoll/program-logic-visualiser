@@ -93,7 +93,16 @@ const createNetwork = (graph: FunctionCallGraph): void => {
   // This attaches the canvas to the container element
   network = new Network(container, data, DEFAULT_NETWORK_OPTIONS);
 
-  network.on("click", (properties) => onNodeClick(properties, nodes));
+  network.on("click", (properties) => {
+    try {
+      onNodeClick(properties, nodes);
+    } catch (e) {
+      alert(`Syntax error! ${(e as Error).message}`);
+
+      // Re-construct previous network so the user doesn't just see a white screen
+      createNetwork(graph);
+    }
+  });
 };
 
 export default createNetwork;

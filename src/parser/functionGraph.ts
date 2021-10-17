@@ -1,42 +1,12 @@
 import { STATEMENT_END, ENTRY_POINT } from "utils/constants";
-import {
-  ifStatementRegex,
-  functionCallRegex,
-  variableDeclarationRegex,
-  variableAssignmentRegex
-} from "./regex";
+import { ifStatementRegex, functionCallRegex } from "./regex";
 import { FunctionDeclarationMap } from "./tokenize";
 import {
   FunctionCallGraph,
   GraphEdge,
   IfStatement,
-  StatementType,
-  VariableDeclaration,
-  VariableMap
+  StatementType
 } from "./types";
-
-const parseVariable = (
-  rawValue: string,
-  existingVars: VariableMap
-): number | boolean => {
-  let parsedValue: number | boolean;
-
-  if (rawValue === "true" || rawValue === "false") {
-    parsedValue = rawValue === "true";
-  } else if (!Number.isNaN(parseInt(rawValue, 10))) {
-    parsedValue = parseInt(rawValue, 10);
-  }
-  // Value must be a variable reassignment, check if the reassigned var exists
-  else if (!existingVars[rawValue]) {
-    throw new Error(
-      `Tried to re-assign ${rawValue}, but ${rawValue} does not exist!`
-    );
-  } else {
-    parsedValue = existingVars[rawValue];
-  }
-
-  return parsedValue;
-};
 
 const analyseFunction = (
   functionName: string,
@@ -64,9 +34,6 @@ const analyseFunction = (
 
   // Count how many STATEMENT_END tokens needed until function ends
   const statements: { type: StatementType; condition: string }[] = [];
-
-  // Map of variables that have been declared and their values
-  const variables: VariableMap = {};
 
   for (let i = 0; i < sourceLines.length; i += 1) {
     const line = sourceLines[i].trim();
@@ -96,31 +63,6 @@ const analyseFunction = (
           condition: ifStatementInfo.join(" ")
         });
       }
-
-      // Found a variable declaration
-      else if (new RegExp(variableDeclarationRegex).test(line)) {
-        const [, ...groups] = new RegExp(variableDeclarationRegex).exec(line);
-        const [name, value] = groups as VariableDeclaration;
-
-        if (variables[name]) {
-          throw new Error(`Variable ${name} has already been declared.`);
-        }
-
-        variables[name] = parseVariable(value, variables);
-      }
-
-      // Found a variable assignment
-      else if (new RegExp(variableAssignmentRegex).test(line)) {
-        const [, ...groups] = new RegExp(variableAssignmentRegex).exec(line);
-        const [name, value] = groups as VariableDeclaration;
-
-        if (!variables[name]) {
-          throw new Error(`Variable ${name} has not been declared!`);
-        }
-
-        variables[name] = parseVariable(value, variables);
-      }
-
       // Found a function call e.g. a(x, y)
       else if (new RegExp(functionCallRegex).test(line)) {
         const callFuncName = line.split("(")[0];

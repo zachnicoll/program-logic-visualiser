@@ -38,6 +38,8 @@ func main() does
 
   a()
 
+  let x = false
+
   if x == true then
   	b()
     c()

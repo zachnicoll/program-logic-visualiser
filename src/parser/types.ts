@@ -24,6 +24,7 @@ export type LogicNode = {
   id: string;
   label: string;
   type: LogicNodeType;
+  evaluates?: boolean;
 };
 
 export type LogicEdge = {
