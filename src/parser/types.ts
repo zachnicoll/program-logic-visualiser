@@ -39,9 +39,12 @@ export type FunctionCallGraph = {
   edges: GraphEdge[];
 };
 
+export type VariableMap = Record<string, number | boolean>;
+
 export type LogicDiagram = {
   nodes: LogicNode[];
   edges: LogicEdge[];
+  variableDeclarations: VariableMap;
 };
 
 export enum StatementType {
@@ -54,7 +57,5 @@ export enum StatementType {
 export type IfStatement = [lhs: string, condition: string, rhs: string];
 
 export type VariableDeclaration = [name: string, value: string];
-
-export type VariableMap = Record<string, number | boolean>;
 
 export type Branch = { branch: "if" | "else"; decisionNode: LogicNode };

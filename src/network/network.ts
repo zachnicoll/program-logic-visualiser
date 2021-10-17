@@ -1,6 +1,6 @@
 import { DataSet } from "vis-data";
 import { Network, Data } from "vis-network/standalone";
-import { FunctionCallGraph, GraphNode } from "parser/types";
+import { FunctionCallGraph, GraphNode, VariableMap } from "parser/types";
 import { ENTRY_POINT } from "utils/constants";
 import logicDiagram from "parser/logicDiagram";
 import {
@@ -15,8 +15,49 @@ import {
   DISABLED_NODE_STYLE,
   DISABLED_EDGE_STYLE
 } from "./defaults";
+import showParameterBox, { destroyParameterBox } from "./parameterBox";
 
 let network: Network | null = null;
+
+export const drawLogicDiagram = (
+  functionNode: GraphNode,
+  variableOverwrites?: VariableMap
+): void => {
+  // Clear the current network
+  network.destroy();
+
+  const diagram = logicDiagram(functionNode.lines, variableOverwrites);
+
+  const nodesData = new DataSet(
+    diagram.nodes.map((node) => ({
+      ...node,
+      ...DEAFULT_NODE_STYLE,
+      ...DIAGRAM_NODE_TYPE_MAP[node.type],
+      ...(node.reachable === false ? DISABLED_NODE_STYLE : {})
+    }))
+  );
+
+  const edgesData = new DataSet(
+    diagram.edges.map((e) => ({
+      ...e,
+      ...DEFAULT_EDGE_STYLE,
+      ...(e.reachable === false ? DISABLED_EDGE_STYLE : {}),
+      font: { face: FONT_FACE, size: 16 },
+      id: `${e.from}->${e.to}`
+    }))
+  );
+
+  const data: Data = {
+    nodes: nodesData,
+    edges: edgesData
+  };
+
+  const container = document.getElementById("visjs-container");
+  network = new Network(container, data, DEFAULT_DIAGRAM_OPTIONS);
+
+  destroyParameterBox();
+  showParameterBox(diagram.variableDeclarations, functionNode);
+};
 
 /**
  * Draws the Program Logic Diagram for the code inside the clicked node (function)
@@ -29,37 +70,7 @@ const onNodeClick = (
   const clickedNode: GraphNode = nodes.get(ids)[0];
 
   if (clickedNode) {
-    // Clear the current network
-    network.destroy();
-
-    const diagram = logicDiagram(clickedNode.lines);
-
-    const nodesData = new DataSet(
-      diagram.nodes.map((node) => ({
-        ...node,
-        ...DEAFULT_NODE_STYLE,
-        ...DIAGRAM_NODE_TYPE_MAP[node.type],
-        ...(node.reachable === false ? DISABLED_NODE_STYLE : {})
-      }))
-    );
-
-    const edgesData = new DataSet(
-      diagram.edges.map((e) => ({
-        ...e,
-        ...DEFAULT_EDGE_STYLE,
-        ...(e.reachable === false ? DISABLED_EDGE_STYLE : {}),
-        font: { face: FONT_FACE, size: 16 },
-        id: `${e.from}->${e.to}`
-      }))
-    );
-
-    const data: Data = {
-      nodes: nodesData,
-      edges: edgesData
-    };
-
-    const container = document.getElementById("visjs-container");
-    network = new Network(container, data, DEFAULT_DIAGRAM_OPTIONS);
+    drawLogicDiagram(clickedNode);
   }
 };
 

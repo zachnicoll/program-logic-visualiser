@@ -21,7 +21,10 @@ import {
 } from "./types";
 import { parseVariable, parseValue } from "./valueParsers";
 
-const logicDiagram = (funcLines: string[]): LogicDiagram => {
+const logicDiagram = (
+  funcLines: string[],
+  variableOverwrites?: VariableMap
+): LogicDiagram => {
   // The START node goes first, always
   const nodes: LogicNode[] = [START_NODE];
   const edges: LogicEdge[] = [];
@@ -40,6 +43,9 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
 
   // Map of variables that have been declared and their values
   const variables: VariableMap = {};
+
+  // Capture the variables when they are declared, so they can be returned and modified
+  const variableDeclarations: VariableMap = {};
 
   const noEmptyLines = funcLines.filter((line) => line.length);
 
@@ -65,7 +71,14 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
         throw new Error(`Variable ${name} has already been declared.`);
       }
 
-      variables[name] = parseVariable(value, variables);
+      if (variableOverwrites && variableOverwrites[name] !== undefined) {
+        variables[name] = variableOverwrites[name];
+      } else {
+        variables[name] = parseVariable(value, variables);
+      }
+
+      // Save a copy of the variable in its declared form
+      variableDeclarations[name] = variables[name];
     }
 
     // Found a variable assignment
@@ -247,7 +260,8 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
 
   return {
     nodes,
-    edges
+    edges,
+    variableDeclarations
   };
 };
 
