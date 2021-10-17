@@ -39,23 +39,24 @@ func main() does
   perform HELLO_WORLD
 
   a()
+  
+  // Define variables
+  let x = 10
+  let y = 20
 
-  let x = false
-  let y = true
-
-  if x != y then
-  	b()
+  if x >= 10 then
+    b()
     c()
     
-    if x == y then
+    if y < x then
       b()
       c()
-  	else
-    	perform ELSE_ACTION
-  	end
+    else
+      perform ELSE_ACTION
+    end
 
   end
-  
+
   d()
   e()
 end

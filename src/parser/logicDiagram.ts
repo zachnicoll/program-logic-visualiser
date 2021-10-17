@@ -89,7 +89,9 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
         label: `${funcName}(${params.join(",")})`,
         type: LogicNodeType.TERMINAL
       };
-    } else if (new RegExp(ifStatementRegex).test(line)) {
+    }
+    // Found an if-statement
+    else if (new RegExp(ifStatementRegex).test(line)) {
       const [, ...groups] = new RegExp(ifStatementRegex).exec(line);
       const [lhs, condition, rhs] = groups as IfStatement;
 
@@ -113,8 +115,6 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
         y
       );
 
-      console.log({ evaluates, x, y });
-
       node = {
         id: `${i}`,
         label: formatDecisionLabel(lhs, condition, rhs),
@@ -123,7 +123,9 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
       };
 
       branches.unshift({ branch: "if", decisionNode: node });
-    } else if (new RegExp(elseRegex).test(line)) {
+    }
+    // Found an else keyword
+    else if (new RegExp(elseRegex).test(line)) {
       /**
        * We've moved into an else-block, move the last nodes evaluated in the if-block
        * to the front of the lastIfNodes array.
@@ -142,7 +144,9 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
        * back with the correct branch.
        */
       branches.unshift({ branch: "else", decisionNode: lastDecision });
-    } else if (line.localeCompare(STATEMENT_END) === 0) {
+    }
+    // Found a STATEMENT_END keyword
+    else if (line.localeCompare(STATEMENT_END) === 0) {
       if (branches.length) {
         const { branch, decisionNode } = branches.shift();
 
@@ -183,6 +187,7 @@ const logicDiagram = (funcLines: string[]): LogicDiagram => {
       }
     }
 
+    // Might not be a node this line, if the line was a comment
     if (node) {
       // If there are previous nodes, connect them to this node
       prevNodes.forEach((prevNode) => {
