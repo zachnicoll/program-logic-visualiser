@@ -56,7 +56,9 @@ export const drawLogicDiagram = (
   network = new Network(container, data, DEFAULT_DIAGRAM_OPTIONS);
 
   destroyParameterBox();
-  showParameterBox(diagram.variableDeclarations, functionNode);
+
+  if (Object.keys(diagram.variableDeclarations).length > 0)
+    showParameterBox(diagram.variableDeclarations, functionNode);
 };
 
 /**
