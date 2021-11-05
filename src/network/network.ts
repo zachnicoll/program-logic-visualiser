@@ -19,6 +19,9 @@ import showParameterBox, { destroyParameterBox } from "./parameterBox";
 
 let network: Network | null = null;
 
+/**
+ * Draw the Program Logic Diagram for a given function node and its source code
+ */
 export const drawLogicDiagram = (
   functionNode: GraphNode,
   variableOverwrites?: VariableMap
@@ -26,6 +29,7 @@ export const drawLogicDiagram = (
   // Clear the current network
   network.destroy();
 
+  // Convert source code to nodes and edges
   const diagram = logicDiagram(functionNode.lines, variableOverwrites);
 
   const nodesData = new DataSet(
@@ -52,6 +56,7 @@ export const drawLogicDiagram = (
     edges: edgesData
   };
 
+  // Show visualisation on screen
   const container = document.getElementById("visjs-container");
   network = new Network(container, data, DEFAULT_DIAGRAM_OPTIONS);
 
@@ -76,7 +81,14 @@ const onNodeClick = (
   }
 };
 
+/**
+ * Draw Function Call Graph network visualisation, given a graph containing
+ * nodes and edges that has been generated via functionGraph()
+ *
+ * @see functionGraph src/parser/functionGraph.ts
+ */
 const createNetwork = (graph: FunctionCallGraph): void => {
+  // Destroy it if it already exists
   if (network) {
     network.destroy();
     destroyParameterBox();
@@ -103,7 +115,6 @@ const createNetwork = (graph: FunctionCallGraph): void => {
     })
   );
 
-  // create a network
   const container = document.getElementById("visjs-container");
 
   const data: Data = {
@@ -111,7 +122,7 @@ const createNetwork = (graph: FunctionCallGraph): void => {
     edges
   };
 
-  // This attaches the canvas to the container element
+  // This attaches the canvas to the container element, draws the visualisation
   network = new Network(container, data, DEFAULT_NETWORK_OPTIONS);
 
   network.on("click", (properties) => {

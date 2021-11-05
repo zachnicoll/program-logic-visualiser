@@ -16,7 +16,7 @@ export enum LogicNodeType {
   START, // First node
   STOP, // Last node (or 'end' statement)
   DECISION, // If statement node
-  PROCESS, // perform action statement node
+  PROCESS, // Perform action statement node
   TERMINAL // Other function calls node
 }
 
