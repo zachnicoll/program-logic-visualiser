@@ -127,6 +127,7 @@ const createNetwork = (graph: FunctionCallGraph): void => {
 
   network.on("click", (properties) => {
     try {
+      // Generate the Logic Flow diagram for the clicked node
       onNodeClick(properties, nodes);
     } catch (e) {
       alert(`Syntax error! ${(e as Error).message}`);
