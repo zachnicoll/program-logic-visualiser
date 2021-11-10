@@ -15,32 +15,32 @@ yarn start
 
 *Function main() calls function a()*
 
-[Function main() calls function a()](content/example1.png)
+![Function main() calls function a()](content/example1.png)
 
 *Function main() conditionally calls function a()*
 
-[Function main() conditionally calls function a()](content/example2.png)
+![Function main() conditionally calls function a()](content/example2.png)
 
 *Function a() calls itself*
 
-[Function a() calls itself](content/example3.png)
+![Function a() calls itself](content/example3.png)
 
 *Complex example*
 
-[A complex example](content/complex_graph.png)
+![A complex example](content/complex_graph.png)
 ### Logic Flow Diagram
 
 *Action A_ACTION is performed inside a function*
 
-[A_ACTION is performed inside a function](content/example5.png)
+![A_ACTION is performed inside a function](content/example5.png)
 
 *Decision node determining the flow of execution*
 
-[Decision node determining the flow of execution](content/example6.png)
+![Decision node determining the flow of execution](content/example6.png)
 
 *Complex example*
 
-[A complex example](content/complex_logic.png)
+![A complex example](content/complex_logic.png)
 
 ## User Guide
 
@@ -52,7 +52,7 @@ This produces the "Function Call Graph" associated with the pseudo-program. This
 
 Hover your mouse pointer over conditional edges to display the condition that must be met in order for the function to be called.
 
-[Hover over a conditional edge to reveal the condition](content/example4.png)
+![Hover over a conditional edge to reveal the condition](content/example4.png)
 
 Clicking on any of the nodes in the graph will produce the "Logic Flow Diagram" for that function. This visualisation represents the inner logic and conditions associated with the execution flow of the function.
 - START and STOP represent the beginning and end of execution flow within the function
@@ -62,7 +62,7 @@ Clicking on any of the nodes in the graph will produce the "Logic Flow Diagram" 
 
 In the Logic Flow Diagram, the box in the top right corner of the screen shows all of the local variables inside that function. Changing the values and clicking "re-evaluate" with regenerate the diagram considering these new values.
 
-[Dynamic parameter manipulation](content/params.png)
+![Dynamic parameter manipulation](content/params.png)
 
 ## Pseudocode Syntax
 
